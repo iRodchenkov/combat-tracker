@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Domain.Mechanics;
-using Domain.Mechanics.Triggers;
 using Domain.Units;
 
 namespace Domain.Conditions
 {
     [Serializable]
-    public sealed class OngoingDamage : IActiveCondition
+    public sealed class PeriodicDamage : IActiveCondition
     {
         private readonly int _amount;
         private readonly DamageType _damageType;
 
-        public OngoingDamage(Unit target, int amount, DamageType damageType)
+        public PeriodicDamage(int amount, DamageType damageType, ITrigger activationTrigger, ITrigger removeTrigger)
         {
             _amount = amount;
             _damageType = damageType;
             Name = "Продолжительный урон";
             Description = $"В начале хода персонаж получит {amount} урона {damageType}";
-            RemoveTrigger = new SavingThrowTrigger();
-            ActivationTrigger = new BeginingOfTurnTrigger(target);
+            RemoveTrigger = activationTrigger;
+            ActivationTrigger = removeTrigger;
         }
 
         public string Name { get; }

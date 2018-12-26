@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Domain.Conditions
 {
+    [Serializable]
     public sealed class Conditions : IEnumerable<ICondition>
     {
         private readonly ICondition[] _conditions;

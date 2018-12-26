@@ -6,6 +6,7 @@ using Domain.Mechanics;
 
 namespace Domain.Units
 {
+    [Serializable]
     public sealed class Unit
     {
         public Unit(Guid id, string name, int currentHits, int maxHits, int tempHits, IEnumerable<ICondition> conditions)
@@ -16,11 +17,6 @@ namespace Domain.Units
             MaxHits = maxHits;
             TempHits = tempHits;
             Conditions = new Conditions.Conditions(conditions);
-        }
-
-        public bool Equals(Unit other)
-        {
-            return Id.Equals(other.Id);
         }
 
         public Guid Id { get; }

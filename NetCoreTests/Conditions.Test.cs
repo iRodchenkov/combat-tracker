@@ -1,6 +1,5 @@
 using Domain.Units;
 using System;
-using System.Linq;
 using Domain.Conditions;
 using Domain.Mechanics;
 using Domain.Mechanics.Triggers;
@@ -12,14 +11,6 @@ namespace NetCoreTests
     {
         private static Unit GetGautak() => new Unit(Guid.NewGuid(), "Gautak", 80, 100, 0, null);
         private static Unit GetDefini() => new Unit(Guid.NewGuid(), "Defini", 40, 50, 0, null);
-
-        //[Fact]
-        //public void InitTest()
-        //{
-        //    var gautak = GetGautak();
-
-        //    gautak.AddConditions(new OngoingDamage());
-        //}
 
         [Fact]
         public void OngoingDamageTest()
@@ -39,8 +30,8 @@ namespace NetCoreTests
                 if (condition is IActiveCondition active
                     && active.ActivationTrigger is BeginingOfTurnTrigger beginingOfTurnTrigger)
                 {
-                    Assert.False(beginingOfTurnTrigger.IsTriggered(defini.Id));
-                    Assert.True(beginingOfTurnTrigger.IsTriggered(gautak.Id));
+                    Assert.False(beginingOfTurnTrigger.IsTriggered(defini));
+                    Assert.True(beginingOfTurnTrigger.IsTriggered(gautak));
 
                     active.Activate(gautak, context);
                     Assert.Equal(70, gautak.CurrentHits);
