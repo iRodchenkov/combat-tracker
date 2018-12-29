@@ -29,7 +29,7 @@ namespace Domain.Conditions
 
         public ITrigger ActivationTrigger { get; }
 
-        public void Activate(Unit target, ActionContext context)
+        public void Activate(Unit target, IActionContext context)
         {
             target.Damage(_amount, _damageType, context.DamageCalculator);
         }

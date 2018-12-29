@@ -5,7 +5,7 @@ namespace Domain.Conditions
 {
     public interface IActiveCondition: ICondition
     {
-        void Activate(Unit target, ActionContext context);
+        void Activate(Unit target, IActionContext context);
         ITrigger ActivationTrigger { get; }
     }
 }

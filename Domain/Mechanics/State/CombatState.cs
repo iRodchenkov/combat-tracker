@@ -28,6 +28,8 @@ namespace Domain.Mechanics.State
 
         public int Round { get; private set; }
 
+        public TurnPhases Phase { get; set; }
+
         public ICombatActivation AddActivation(Unit unit, decimal initiative)
         {
             return _activations.Add(unit, initiative);

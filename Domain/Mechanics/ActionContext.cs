@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain.Mechanics
 {
-    public sealed class ActionContext
+    public sealed class ActionContext : IActionContext
     {
         public ActionContext(IDamageCalculator damageCalculator)
         {
