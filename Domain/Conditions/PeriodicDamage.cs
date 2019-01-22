@@ -18,8 +18,8 @@ namespace Domain.Conditions
             _damageType = damageType;
             Name = "Продолжительный урон";
             Description = $"В начале хода персонаж получит {amount} урона {damageType}";
-            RemoveTrigger = activationTrigger;
-            ActivationTrigger = removeTrigger;
+            RemoveTrigger = removeTrigger;
+            ActivationTrigger = activationTrigger;
         }
 
         public string Name { get; }

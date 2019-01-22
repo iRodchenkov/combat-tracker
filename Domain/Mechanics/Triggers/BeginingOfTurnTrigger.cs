@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Mechanics.State;
 using Domain.Units;
 
 namespace Domain.Mechanics.Triggers
@@ -8,14 +9,18 @@ namespace Domain.Mechanics.Triggers
     {
         private readonly Unit _relatedTo;
 
-        public BeginingOfTurnTrigger(Unit relatedTo)
+        public BeginingOfTurnTrigger(string description, Unit relatedTo)
         {
+            Description = description;
             _relatedTo = relatedTo;
         }
 
-        public bool IsTriggered(Unit relatedTo)
+        public string Description { get; }
+
+        public bool IsTriggered(CombatState state)
         {
-            return _relatedTo == relatedTo;
+            return state.Phase == TurnPhases.BeginingOfTurn
+                && _relatedTo == state.Activations.Current.Unit;
         }
     }
 }

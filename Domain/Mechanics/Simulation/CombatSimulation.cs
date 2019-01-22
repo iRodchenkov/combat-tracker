@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using Domain.Conditions;
 using Domain.Mechanics.State;
-using Domain.Mechanics.Triggers;
 using Domain.Units;
-using CombatSimulationResult = Core.OperationResult<Domain.Mechanics.State.CombatState, Domain.Mechanics.Simulation.CombatSimulationErrors>;
+using CombatSimulationResult = Core.ActionResult<Domain.Mechanics.Simulation.CombatSimulationErrors>;
 
 namespace Domain.Mechanics.Simulation
 {
     public sealed class CombatSimulation
     {
-        private IActionContext _context;
+        private readonly IActionContext _context;
 
         public CombatSimulation(IActionContext context)
         {
@@ -20,155 +20,127 @@ namespace Domain.Mechanics.Simulation
 
         public CombatSimulationResult Next(CombatState state)
         {
-            if (state.Activations.Current == null)
-            {
-                StartNewRound(state);
-                return new CombatSimulationResult(state);
-            }
-            if (state.Activations.Current == null) return new CombatSimulationResult(CombatSimulationErrors.NoActivations);
-
             switch (state.Phase)
             {
                 case TurnPhases.BeginingOfTurn:
-                    break;
+                    return MoveToTurn(state);
                 case TurnPhases.Turn:
-                    break;
+                    return MoveToEndOfTurn(state);
                 case TurnPhases.EndOfTurn:
-                    break;
+                    return MoveToSavingThrows(state);
+                case TurnPhases.BeginingOfCombat:
                 case TurnPhases.SavingThrows:
-                    break;
+                    return MoveToBeginingOfTurn(state);
+                case TurnPhases.EndOfCombat:
+                    return Error(CombatSimulationErrors.SimulationIsCompleted);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            return new CombatSimulationResult(state);
         }
 
-        private void StartNewRound(CombatState state)
+        private CombatSimulationResult MoveToBeginingOfTurn(CombatState state)
         {
-            state.StartNewRound();
-            StartNewTurn(state);
-        }
+            if (state.EffectsToRemove.Any()) return Error(CombatSimulationErrors.HasEffectsToRemove);
 
-        private void StartNewTurn(CombatState state)
-        {
+            if (state.Activations.Current != null) state.NextActivation();
+            if (state.Activations.Current == null)
+            {
+                state.StartNewRound();
+                if (state.Activations.Current == null) return Error(CombatSimulationErrors.NoActivations);
+            }
             state.Phase = TurnPhases.BeginingOfTurn;
-            
+            RemoveEffectsOnCurrentPhase(state);
+            state.EffectsToActivete.AddRange(GetEffectsToActivateOnCurrentPhase(state));
+            if (!state.EffectsToActivete.Any()) return MoveToTurn(state);
+            return Success();
         }
 
-        private static void CompleteEffects<TTrigger>(CombatState state)
+        private CombatSimulationResult MoveToTurn(CombatState state)
         {
-            foreach (var effect in FilterEffects(state, Selector))
+            if (state.EffectsToActivete.Any()) return Error(CombatSimulationErrors.HasEffectsToApply);
+            state.Phase = TurnPhases.Turn;
+            return Success();
+        }
+
+        private CombatSimulationResult MoveToEndOfTurn(CombatState state)
+        {
+            state.Phase = TurnPhases.EndOfTurn;
+            state.EffectsToActivete.AddRange(GetEffectsToActivateOnCurrentPhase(state));
+            if (!state.EffectsToActivete.Any()) return MoveToSavingThrows(state);
+            return Success();
+        }
+
+        private CombatSimulationResult MoveToSavingThrows(CombatState state)
+        {
+            if (state.EffectsToActivete.Any()) return Error(CombatSimulationErrors.HasEffectsToApply);
+            state.Phase = TurnPhases.SavingThrows;
+            state.EffectsToRemove.AddRange(GetEffectsToRemoveOnCurrentPhase(state));
+            if (!state.EffectsToRemove.Any()) return MoveToBeginingOfTurn(state);
+            return Success();
+        }
+
+        private static void RemoveEffectsOnCurrentPhase(CombatState state)
+        {
+            foreach (var effect in GetEffectsToRemoveOnCurrentPhase(state))
             {
                 effect.Unit.RemoveConditions(effect.Conditions);
             }
+        }
 
-            IEnumerable<Effect<ICondition>> Selector(Unit unit, Unit current)
+        [Pure]
+        private static IEnumerable<Effect<ICondition>> GetEffectsToRemoveOnCurrentPhase(CombatState state)
+        {
+            return FilterEffects(state, (unit, combatState) =>
             {
                 return unit.Conditions
-                    .GroupBy(c => c.RemoveTrigger as BeginingOfTurnTrigger)
-                    .Where(t => t.Key != null && t.Key.IsTriggered(current))
+                    .GroupBy(c => c.RemoveTrigger)
+                    .Where(t => t.Key != null && t.Key.IsTriggered(combatState))
                     .Select(x => new Effect<ICondition>
                     {
                         Unit = unit,
                         Trigger = x.Key,
                         Conditions = x.ToArray()
                     });
-            }
+            });
         }
 
-        private static void CompleteEffectsAtTheBeginigOfTheTurn(CombatState state)
+        [Pure]
+        private static IEnumerable<Effect<IActiveCondition>> GetEffectsToActivateOnCurrentPhase(CombatState state)
         {
-            foreach (var effect in FilterEffects(state, Selector))
-            {
-                effect.Unit.RemoveConditions(effect.Conditions);
-            }
-
-            IEnumerable<Effect<ICondition>> Selector(Unit unit, Unit current)
+            return FilterEffects(state, (unit, combatState) =>
             {
                 return unit.Conditions
-                    .GroupBy(c => c.RemoveTrigger as BeginingOfTurnTrigger)
-                    .Where(t => t.Key != null && t.Key.IsTriggered(current))
-                    .Select(x => new Effect<ICondition>
-                    {
-                        Unit = unit,
-                        Trigger = x.Key,
-                        Conditions = x.ToArray()
-                    });
-            }
-        }
-
-        private void GetEffectsWhichActivateAtTheBeginigOfTheTurn(CombatState state)
-        {
-            foreach (var effect in FilterEffects(state, Selector))
-            {
-                foreach (var condition in effect.Conditions)
-                {
-                    condition.Activate(effect.Unit, _context);
-                }
-            }
-
-            IEnumerable<Effect<IActiveCondition>> Selector(Unit unit, Unit current)
-            {
-                return unit.Conditions.OfType<IActiveCondition>()
-                    .GroupBy(c => c.ActivationTrigger as BeginingOfTurnTrigger)
-                    .Where(t => t.Key != null && t.Key.IsTriggered(current))
+                    .OfType<IActiveCondition>()
+                    .GroupBy(c => c.ActivationTrigger)
+                    .Where(t => t.Key != null && t.Key.IsTriggered(combatState))
                     .Select(x => new Effect<IActiveCondition>
                     {
                         Unit = unit,
                         Trigger = x.Key,
                         Conditions = x.ToArray()
                     });
-            }
-    }
-
-        private static void CompleteEffectsAtTheEndOfTheTurn(CombatState state)
-        {
-            var effects = state.Activations.SelectMany(a => a.Unit.Conditions.Select(c => (unit: a.Unit, condition: c)))
-                .Where(x => (x.condition.RemoveTrigger as EndOfTurnTrigger)?.IsTriggered(state.Activations.Current.Unit) ?? false);
+            });
         }
 
-        private static void GetEffectsWhichActivateAtTheEndOfTheTurn(CombatState state)
-        {
-            var effects = state.Activations.SelectMany(a => a.Unit.Conditions.Select(c => (unit: a.Unit, condition: c)))
-                .Where(x => ((x.condition as IActiveCondition)?.ActivationTrigger as EndOfTurnTrigger)?.IsTriggered(
-                                state.Activations.Current.Unit) ?? false);
-        }
-
-        private static void GetEffectsWhichFinishWithTheSavingThrow(CombatState state)
-        {
-            var effects = state.Activations.SelectMany(a => a.Unit.Conditions.Select(c => (unit: a.Unit, condition: c)))
-                .Where(x => x.condition.RemoveTrigger is SavingThrowTrigger);
-        }
-
-        private static void OnTurnCompleted(CombatState state)
-        {
-            var effects = state.Activations.SelectMany(a => a.Unit.Conditions.Select(c => (unit: a.Unit, condition: c)))
-                .Select(x => x.condition.RemoveTrigger as EndOfTurnTrigger).Where(x => x != null).Distinct();
-
-            foreach (var effect in effects)
-            {
-                effect.OnTurnCompleted(state.Activations.Current.Unit);
-            }
-        }
-
-        private static IEnumerable<Effect<TCondition>> FilterEffects<TCondition>(CombatState state, Func<Unit, Unit, IEnumerable<Effect<TCondition>>> selector)
+        [Pure]
+        private static IEnumerable<Effect<TCondition>> FilterEffects<TCondition>(CombatState state, Func<Unit, CombatState, IEnumerable<Effect<TCondition>>> selector)
             where TCondition : ICondition
         {
-            return state.Activations.Select(x => x.Unit).Distinct().SelectMany(x => selector(x, state.Activations.Current.Unit));
+            return state.Activations.Select(x => x.Unit).Distinct().SelectMany(x => selector(x, state));
         }
 
-        private sealed class Effect<TCondition>
-            where TCondition: ICondition
-        {
-            public Unit Unit { get; set; }
-            public ITrigger Trigger { get; set; }
-            public TCondition [] Conditions { get; set; }
-        }
+        [Pure]
+        private static CombatSimulationResult Success() => new CombatSimulationResult();
+
+        [Pure]
+        private static CombatSimulationResult Error(CombatSimulationErrors error) => new CombatSimulationResult(error);
     }
 
     public enum CombatSimulationErrors
     {
-        NoActivations
+        NoActivations,
+        HasEffectsToApply,
+        HasEffectsToRemove,
+        SimulationIsCompleted
     }
 }

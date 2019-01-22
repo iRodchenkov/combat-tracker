@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Conditions;
 using Domain.Units;
 
 namespace Domain.Mechanics.State
@@ -12,7 +13,10 @@ namespace Domain.Mechanics.State
         public CombatState()
         {
             _activations = new CombatActivations();
+            EffectsToActivete = new List<Effect<IActiveCondition>>();
+            EffectsToRemove = new List<Effect<ICondition>>();
             Round = 0;
+            Phase = TurnPhases.BeginingOfCombat;
         }
 
         //public CombatState(IEnumerable<Unit> units, int round)
@@ -29,6 +33,10 @@ namespace Domain.Mechanics.State
         public int Round { get; private set; }
 
         public TurnPhases Phase { get; set; }
+
+        public List<Effect<ICondition>> EffectsToRemove { get; }
+
+        public List<Effect<IActiveCondition>> EffectsToActivete { get; }
 
         public ICombatActivation AddActivation(Unit unit, decimal initiative)
         {

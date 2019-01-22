@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Mechanics.State;
 using Domain.Units;
 
 namespace Domain.Mechanics.Triggers
@@ -10,15 +11,20 @@ namespace Domain.Mechanics.Triggers
 
         private bool _shouldTriggerNextTime;
 
-        public EndOfTurnTrigger(Unit relatedTo, bool shouldTriggerNextTime)
+        public EndOfTurnTrigger(string description, Unit relatedTo, bool shouldTriggerNextTime)
         {
+            Description = description;
             _relatedTo = relatedTo;
             _shouldTriggerNextTime = shouldTriggerNextTime;
         }
 
-        public bool IsTriggered(Unit relatedTo)
+        public string Description { get; }
+
+        public bool IsTriggered(CombatState state)
         {
-            return _shouldTriggerNextTime && _relatedTo == relatedTo;
+            return state.Phase == TurnPhases.EndOfTurn
+                && _shouldTriggerNextTime
+                && _relatedTo == state.Activations.Current.Unit;
         }
 
         public void OnTurnCompleted(Unit unit)
