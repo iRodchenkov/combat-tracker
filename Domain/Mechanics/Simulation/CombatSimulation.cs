@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Domain.Conditions;
-using Domain.Mechanics.State;
-using Domain.Units;
-using CombatSimulationResult = Core.ActionResult<Domain.Mechanics.Simulation.CombatSimulationErrors>;
+using CombatTracker.Domain.Conditions;
+using CombatTracker.Domain.Mechanics.State;
+using CombatTracker.Domain.Units;
+using CombatSimulationResult = CombatTracker.Core.ActionResult<CombatTracker.Domain.Mechanics.Simulation.CombatSimulationErrors>;
 
-namespace Domain.Mechanics.Simulation
+namespace CombatTracker.Domain.Mechanics.Simulation
 {
     public sealed class CombatSimulation
     {

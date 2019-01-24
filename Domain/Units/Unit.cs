@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Conditions;
-using Domain.Mechanics;
+using CombatTracker.Domain.Conditions;
+using CombatTracker.Domain.Mechanics;
 
-namespace Domain.Units
+namespace CombatTracker.Domain.Units
 {
     [Serializable]
     public sealed class Unit

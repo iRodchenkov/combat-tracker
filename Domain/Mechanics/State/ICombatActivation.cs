@@ -1,6 +1,6 @@
-﻿using Domain.Units;
+﻿using CombatTracker.Domain.Units;
 
-namespace Domain.Mechanics.State
+namespace CombatTracker.Domain.Mechanics.State
 {
     public interface ICombatActivation
     {

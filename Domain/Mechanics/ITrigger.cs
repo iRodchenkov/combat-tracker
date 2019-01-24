@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Mechanics.State;
+﻿using CombatTracker.Domain.Mechanics.State;
 
-namespace Domain.Mechanics
+namespace CombatTracker.Domain.Mechanics
 {
     public interface ITrigger
     {

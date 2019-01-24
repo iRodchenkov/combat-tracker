@@ -1,8 +1,8 @@
 ﻿using System;
-using Domain.Mechanics.State;
-using Domain.Units;
+using CombatTracker.Domain.Mechanics.State;
+using CombatTracker.Domain.Units;
 
-namespace Domain.Mechanics.Triggers
+namespace CombatTracker.Domain.Mechanics.Triggers
 {
     [Serializable]
     public sealed class EndOfTurnTrigger: ITrigger

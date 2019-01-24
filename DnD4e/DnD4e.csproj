@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyName>CombatTracker.Domain</AssemblyName>
-    <RootNamespace>CombatTracker.Domain</RootNamespace>
+    <AssemblyName>CombatTracker.DnD4e</AssemblyName>
+    <RootNamespace>CombatTracker.DnD4e</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

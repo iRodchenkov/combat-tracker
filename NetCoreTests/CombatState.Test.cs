@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using Domain.Mechanics.State;
-using Domain.Units;
+using CombatTracker.Domain.Mechanics.State;
+using CombatTracker.Domain.Units;
 using Xunit;
 
-namespace NetCoreTests
+namespace CombatTracker.NetCoreTests
 {
     public class CombatStateTest
     {

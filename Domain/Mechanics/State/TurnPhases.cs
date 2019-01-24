@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Mechanics.State
+namespace CombatTracker.Domain.Mechanics.State
 {
     [Serializable]
     public enum TurnPhases

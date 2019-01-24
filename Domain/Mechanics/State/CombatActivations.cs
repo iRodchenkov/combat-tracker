@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Units;
+using CombatTracker.Domain.Units;
 
-namespace Domain.Mechanics.State
+namespace CombatTracker.Domain.Mechanics.State
 {
     [Serializable]
     internal sealed class CombatActivations: ICombatActivations

@@ -1,8 +1,8 @@
 ﻿using System;
-using Domain.Conditions;
-using Domain.Units;
+using CombatTracker.Domain.Conditions;
+using CombatTracker.Domain.Units;
 
-namespace Domain.Mechanics.State
+namespace CombatTracker.Domain.Mechanics.State
 {
     [Serializable]
     public sealed class Effect<TCondition>

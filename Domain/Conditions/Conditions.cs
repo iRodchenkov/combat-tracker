@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Domain.Conditions
+namespace CombatTracker.Domain.Conditions
 {
     [Serializable]
     public sealed class Conditions : IEnumerable<ICondition>

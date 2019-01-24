@@ -1,13 +1,13 @@
 ﻿using System;
-using Domain.Conditions;
-using Domain.Mechanics;
-using Domain.Mechanics.Simulation;
-using Domain.Mechanics.State;
-using Domain.Mechanics.Triggers;
-using Domain.Units;
+using CombatTracker.Domain.Conditions;
+using CombatTracker.Domain.Mechanics;
+using CombatTracker.Domain.Mechanics.Simulation;
+using CombatTracker.Domain.Mechanics.State;
+using CombatTracker.Domain.Mechanics.Triggers;
+using CombatTracker.Domain.Units;
 using Xunit;
 
-namespace NetCoreTests
+namespace CombatTracker.NetCoreTests
 {
     public class CombatSimulationTest
     {

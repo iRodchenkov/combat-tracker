@@ -1,6 +1,6 @@
-﻿using Domain.Mechanics;
+﻿using CombatTracker.Domain.Mechanics;
 
-namespace Domain.Conditions
+namespace CombatTracker.Domain.Conditions
 {
     public interface ICondition
     {

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Units;
+﻿using System.Diagnostics.Contracts;
 
-namespace Domain.Mechanics
+namespace CombatTracker.Domain.Mechanics
 {
     public interface IDamageCalculator
     {
@@ -14,6 +11,7 @@ namespace Domain.Mechanics
         /// <param name="damageType"></param>
         /// <param name="conditions"></param>
         /// <returns></returns>
+        [Pure]
         int ApplyModifiers(int amount, DamageType damageType, Conditions.Conditions conditions);
     }
 }

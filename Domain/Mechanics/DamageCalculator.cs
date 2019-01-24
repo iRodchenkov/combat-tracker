@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Units;
-
-namespace Domain.Mechanics
+﻿namespace CombatTracker.Domain.Mechanics
 {
     public class DamageCalculator: IDamageCalculator
     {

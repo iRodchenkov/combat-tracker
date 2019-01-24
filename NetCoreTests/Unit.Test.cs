@@ -1,8 +1,8 @@
-using Domain.Units;
 using System;
+using CombatTracker.Domain.Units;
 using Xunit;
 
-namespace NetCoreTests
+namespace CombatTracker.NetCoreTests
 {
     public class UnitTest
     {

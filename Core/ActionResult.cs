@@ -1,6 +1,6 @@
 using System;
 
-namespace Core
+namespace CombatTracker.Core
 {
     public class ActionResult<TError>
     {

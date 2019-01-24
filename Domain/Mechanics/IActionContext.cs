@@ -1,4 +1,4 @@
-﻿namespace Domain.Mechanics
+﻿namespace CombatTracker.Domain.Mechanics
 {
     public interface IActionContext
     {

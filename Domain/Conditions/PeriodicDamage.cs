@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Mechanics;
-using Domain.Units;
+using CombatTracker.Domain.Mechanics;
+using CombatTracker.Domain.Units;
 
-namespace Domain.Conditions
+namespace CombatTracker.Domain.Conditions
 {
     [Serializable]
     public sealed class PeriodicDamage : IActiveCondition

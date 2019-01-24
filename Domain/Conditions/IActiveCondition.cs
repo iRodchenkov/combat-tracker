@@ -1,7 +1,7 @@
-﻿using Domain.Mechanics;
-using Domain.Units;
+﻿using CombatTracker.Domain.Mechanics;
+using CombatTracker.Domain.Units;
 
-namespace Domain.Conditions
+namespace CombatTracker.Domain.Conditions
 {
     public interface IActiveCondition: ICondition
     {
